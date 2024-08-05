@@ -1,0 +1,105 @@
+﻿@model Domain.Model._FormViewModel
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12" id="myForm">
+                <form method="post" asp-controller="UserForm" asp-action="AddUser" id="idAddUserForm" class="needs-validation form-horizontal" novalidate="novalidate">
+                    <div class="form-group" hidden>
+                        <label asp-for="@Model.Id"></label>
+                        <input asp-for="@Model.Id" readonly class="form-control" placeholder="Username" />
+                        <span asp-validation-for="@Model.Id" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.Name"></label>
+                                <input asp-for="@Model.Name" class="form-control form-control-sm" />
+                                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.Email"></label>
+                                <input asp-for="@Model.Email" class="form-control form-control-sm" />
+                                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.PhoneNo"></label>
+                                <input asp-for="@Model.PhoneNo" class="form-control form-control-sm" />
+                                <span asp-validation-for="@Model.PhoneNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.Address"></label>
+                                <input asp-for="@Model.Address" class="form-control form-control-sm" />
+                                <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.State"></label>
+                                <select id="State" asp-for="@Model.State" asp-items="@(new SelectList(ViewBag.State, "State", "State"))" class="form-control form-control-sm select2 " style="width: 100%;" onchange="ChageState(this)">
+                                    <option value="-1">Select </option>
+                                </select>
+                                <span asp-validation-for="@Model.State" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.City"></label>
+                                <select asp-for="@Model.City" class="form-control form-control-sm">
+                                </select>
+                                <span asp-validation-for="@Model.City" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+
+                            <label class="checkbox-label" style="vertical-align: text-top;">
+                                <input type="checkbox" class="form-check" id="exampleCheck1" style="width:1em;" onchange="OnChangeFun()" />
+                                <span class="checkbox-custom rectangular"></span>
+                            </label>
+                            <label style="margin-top:30px">I Agree.</label>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 1em;">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-secondary float-right" style="float:right" data-bs-dismiss="modal">Cancel</button>
+                            <button form="idAddUserForm" id="sbId" type="submit" class="btn btn-info btnGO float-left" style="font-size: 1rem!important;">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<script>
+    $(document).ready(function () {
+        $("#sbId").prop('disabled', true)
+    });
+    function OnChangeFun() {
+        if ($("#exampleCheck1").is(":checked")) {
+            $("#sbId").prop('disabled', false)
+            // Checkbox is checked
+        } else {
+            $("#sbId").prop('disabled', true)
+            // Checkbox is not checked
+        }
+    }
+</script>

@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "User List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    /* Apply border to table, table rows, and table cells */
+    #myTable {
+        border-collapse: collapse; /* Ensures borders do not double up */
+        width: 100%;
+    }
+
+        #myTable th, #myTable td {
+            border: 1px solid black; /* Border style for table cells */
+            padding: 8px; /* Optional: adds space inside the cells */
+            text-align: left; /* Align text to the left (optional) */
+        }
+
+        #myTable th {
+            background-color: #f2f2f2; /* Optional: background color for headers */
+        }
+</style>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="AddEditModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modelTitle">Modal title</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height:auto;">
+                <div id="partial"></div>
+            </div>
+            <div class="modal-footer" style="display:none;">
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" id="AddBtn" class="btn btn-primary">Add</button>
+<div style="margin-top:1em">
+    <table id="myTable" border="1" style="width:100%">
+        <thead>
+            <tr>
+                <th hidden>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>PhoneNo</th>
+                <th>State</th>
+                <th>City</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+
+
+    $(document).ready(function () {
+        $.ajax({
+            url: '../UserForm/GetUserList',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+
+                $('#myTable tbody').empty();
+
+
+                $.each(data, function (index, item) {
+                    $('#myTable tbody').append(
+                        '<tr>' +
+                        '<td hidden>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + item.email + '</td>' +
+                        '<td>' + item.address + '</td>' +
+                        '<td>' + item.phoneNo + '</td>' +
+                        '<td>' + item.state + '</td>' +
+                        '<td>' + item.city + '</td>' +
+                        '<td>' +
+                        '<button class="button edit-button btn btn-secondary" data-id="' + item.id + '">Edit</button>' +
+                        '<button class="button delete-button btn btn-danger" style="margin-left: 18%;" data-id="' + item.id + '">Delete</button>' +
+                        '</td>' +
+                        '</tr>'
+                    );
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + error);
+            }
+        });
+        $('#myTable').on('click', '.edit-button', function () {
+            var id = $(this).data('id');
+            var route = '@Url.Action("EditPopup", "UserForm")' + '?Id=' + id;
+            $("#modelTitle").text("Edit User");
+            $("#AddEditModel").modal("show");
+            $("#partial").load(route);
+            // alert('Edit button clicked for ID: ' + id);
+        });
+
+        $('#myTable').on('click', '.delete-button', function () {
+            var id = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this item?')) {
+                $.ajax({
+                    url: '../UserForm/Delete?Id=' + id,
+                    type: 'Post',
+                    dataType: 'json',
+                    success: function (data) {
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error: ' + status + error);
+                    }
+                });
+
+            }
+        });
+
+    });
+    $('#AddEditModel').on('shown.bs.modal', function (e) {
+        $.validator.unobtrusive.parse($('form'));
+
+    });
+
+    $("#AddBtn").click(function () {
+        var route = "@Url.Action("AddPopup", "UserForm")";
+        $("#modelTitle").text("Add User");
+        $("#AddEditModel").modal("show");
+        $("#partial").load(route);
+
+    });
+
+    function ChageState(e) {
+        var state = e.value;
+        var cityDropdown = document.getElementById('City');
+
+        // Clear previous options
+        cityDropdown.innerHTML = '<option value="-1">Select City</option>';
+
+        // Define cities for each state
+        var cities = {
+            'Gujarat': ['Surat', 'Bardoli', 'Baroda'],
+            'Maharashtra': ['Mumbai', 'Pune']
+            // Add other states and their cities as needed
+        };
+        debugger;
+        if (cities[state]) {
+            cities[state].forEach(function (city) {
+                var option = document.createElement('option');
+                option.value = city;
+                option.text = city;
+                cityDropdown.add(option);
+            });
+        }
+    }
+
+</script>
